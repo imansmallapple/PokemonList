@@ -56,7 +56,6 @@ const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon"
 
 
 
-
 class DataSource {
   public static PokemonList: Pokemon[] = [];
 
@@ -77,7 +76,6 @@ class DataSource {
         console.log('Error: ' + err);
       }
     });
-    // return []
   }
 
   async fetchHttpCode(): Promise<number> {
@@ -100,4 +98,4 @@ class DataSource {
 }
 }
 
-export {DataSource}
+export {BASE_URL, DataSource}
