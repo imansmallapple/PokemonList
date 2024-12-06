@@ -1,13 +1,14 @@
-import { Pokemon, PokemonResponse } from '../Model/Pokemon';
+import { Pokemon, PokemonResponse, PokeInfo } from '../Model/Pokemon';
 import http from '@ohos.net.http';
 
-const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1302"
+const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=20"
 
 class PokemonDataSource {
   public static PokemonList: Pokemon[] = [];
 
   constructor() {
   }
+
 
   static getPokemonList(success: Function) {
     let httpRequest = http.createHttp()
@@ -19,6 +20,44 @@ class PokemonDataSource {
       } else {
         // 请求失败，处理错误信息
         console.log('Error: ' + err);
+      }
+    });
+  }
+  // async getPokemonList(): Promise<Pokemon[]> {
+  //   // 返回一个 Promise 来确保异步请求的结果可以正确传递
+  //   return new Promise<Pokemon[]>((resolve, reject) => {
+  //     let httpRequest = http.createHttp()
+  //     httpRequest.request(BASE_URL, (err, data) => {
+  //       if (!err) {
+  //         try {
+  //           let responseData: PokemonResponse = JSON.parse(data.result as string)
+  //           let pokemonList: Pokemon[] = responseData.results
+  //           resolve(pokemonList); // 请求成功，返回 PokemonList
+  //         } catch (error) {
+  //           reject('Failed to parse response data'); // 捕获解析错误
+  //         }
+  //       } else {
+  //         reject('Error: ' + err); // 请求失败，返回错误
+  //       }
+  //     });
+  //   });
+  // }
+
+  static getPokemonInfo(index: number, success: Function, failure?: Function) {
+    let httpRequest = http.createHttp();
+    httpRequest.request(`https://pokeapi.co/api/v2/pokemon/${index + 1}/`, (err, data) => {
+      if (!err) {
+        try {
+          // 尝试解析返回数据
+          let responseData: PokeInfo = JSON.parse(data.result as string);
+          success(responseData); // 成功时回调
+        } catch (parseErr) {
+          console.error('JSON Parse Error:', parseErr);
+          if (failure) failure(parseErr); // 调用失败回调
+        }
+      } else {
+        console.error('HTTP Error:', err);
+        if (failure) failure(err); // 调用失败回调
       }
     });
   }
