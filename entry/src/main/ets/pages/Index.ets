@@ -13,84 +13,63 @@ struct Index {
   private scroller: Scroller = new Scroller()
   @State dataSet: MyDataSource = new MyDataSource()
   @State pokeInfo: PokeInfo[] = []
-  @State typeList: PokeTypeContent[][] = []
+  @State typeList: string[][] = []
 
   aboutToAppear() {
     this.isLoading = true;
-    const source = new PokemonDataSource()
+    const source = new PokemonDataSource();
+
     source.fetchHttpCode().then(async (code) => {
       this.httpCode = code;
-      //网络连接成功
-      if (code == 200) {
-        PokemonDataSource.getPokemonList((data: Pokemon[]) => {
-          this.pokeList = data
 
-          //数据源填充数据
-          for (let index = 0; index < data.length; index++) {
-            this.dataSet.pushData(data[index])
+      if (code === 200) {
+        await source.getPokemonList().then(async (list) => {
+          this.pokeList = list;
+
+          for (let index = 0; index < list.length; index++) {
+            this.dataSet.pushData(list[index]);
           }
 
-          // 异步加载列表详细信息
-          // const promises = this.pokeList.map((item, index) =>
-          // new Promise<void>((resolve) => {
-          //   PokemonDataSource.getPokemonInfo(
-          //     index,
-          //     (info: PokeInfo) => {
-          //       // 确保 `info` 和 `info.types` 存在
-          //       if (info && info.types) {
-          //         this.pokeList[index].detail = info;
-          //         this.pokeList[index].type = info.types.map((typeObj: PokeTypeContent): PokeType => ({
-          //           name: typeObj.type?.name || 'Unknown', // 安全访问类型名称
-          //           url: typeObj.type?.url || '', // 安全访问类型 URL
-          //         }));
-          //         console.log(`Pokemon [${index}]:`, {
-          //           name: this.pokeList[index].name,
-          //           image: this.pokeList[index].image,
-          //           types: this.pokeList[index].type,
-          //         });
-          //       } else {
-          //         console.warn(`No detail or types for index ${index}`);
-          //       }
-          //       resolve(); // 完成当前 Promise
-          //     },
-          //     (error: BusinessError) => {
-          //       console.error(`Error fetching data for index ${index}:`, error);
-          //       resolve(); // 即使失败也完成 Promise，防止阻塞
-          //     }
-          //   );
-          // })
-          // );
-
-          this.pokeList.forEach((item, index: number) => {
-            this.pokeList[index].image = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon' + `/${index + 1}.png`
-            PokemonDataSource.getPokemonInfo(index, (data: PokeInfo) => {
-              this.pokeList[index].detail = data
-              // console.log(`${this.pokeList[index].detail.types[0].type.name}`)
-              // this.pokeInfo[index] = data
-              // item.type = this.pokeList[index].detail.types as PokeTypeContent[]
-              // 确保 detail 和 types 存在再访问
-
-              const types = this.pokeList[index].detail?.types;
-              if (types && types.length > 0) {
-                // this.pokeList[index].type.length = types.length
-
-                console.log(`type length: ${types.length}`)
-                // console.log('pokodata:' + types[0].type.name);
-              } else {
-                console.warn(`No types found for index ${index}`);
-              }
-            },
-              (error: BusinessError) => {
-                console.error(`Error fetching data for index ${index}:`, error);
-              })
+          // 设置图片 URL
+          this.pokeList.forEach((item, index) => {
+            this.pokeList[index].image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`;
           });
-        })
-      }
-      else {
+
+          // 使用 Promise.all 处理所有异步任务
+          const infoPromises = this.pokeList.map((item, index) =>
+          source.getPokemonInfo(index).then((response) => {
+            this.pokeList[index].detail = response;
+          })
+          );
+
+          await Promise.all(infoPromises); // 等待所有异步任务完成
+
+          // 打印每个宝可梦的类型
+          this.pokeList.forEach((item, index) => {
+            if (item.detail && item.detail.types) {
+              const types = item.detail.types.map((type) => {
+                if (type.type && type.type.name) {
+                  return type.type.name; // 确保安全访问
+                } else {
+                  return 'Unknown';
+                }
+              });
+
+              console.log(`Pokemon [${index}]:`, types.join(', '));
+            } else {
+              console.warn(`No types found for Pokemon [${index}]`);
+            }
+          });
+        });
+      } else {
         this.isLoading = false;
+        console.error('Failed to fetch data: HTTP Code', code);
       }
-    })
+    });
   }
+
+
+
 
   build() {
     Row() {
@@ -129,8 +108,8 @@ struct Index {
                 })
 
                 Row() {
-                  // Text(item.detail.name)
-
+                  // Text(this.typeList[index]?.join(', ') || 'No types available')
+                  Text(item.detail?.types?.map(type => type.type?.name).join(', '))
                 }
                 .layoutWeight(1)
               }
