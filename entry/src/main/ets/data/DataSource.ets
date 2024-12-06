@@ -1,7 +1,7 @@
 import { Pokemon, PokemonResponse, PokeInfo } from '../Model/Pokemon';
 import http from '@ohos.net.http';
 
-const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=20"
+const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1000"
 
 class PokemonDataSource {
   public static PokemonList: Pokemon[] = [];
@@ -61,15 +61,27 @@ class PokemonDataSource {
   //     }
   //   });
   // }
-  async getPokemonInfo(index: number): Promise<PokeInfo> {
-    return new Promise<PokeInfo>((resolve, reject) => {
+  async getPokemonInfo(index: number): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
       let httpRequest = http.createHttp();
       httpRequest.request(`https://pokeapi.co/api/v2/pokemon/${index + 1}/`, (err, data) => {
         if (!err) {
           try {
             // 尝试解析返回数据
             let responseData: PokeInfo = JSON.parse(data.result as string);
-            resolve(responseData); // 请求成功并解析成功
+
+            // 检查 types 是否存在
+            if (responseData.types && Array.isArray(responseData.types)) {
+              // 提取类型名称为 string[]
+              let pokeTypes = responseData.types.map((type) => {
+                return type.type?.name || 'Unknown'; // 如果类型不存在，返回 'Unknown'
+              });
+
+              resolve(pokeTypes); // 成功返回类型数组
+            } else {
+              console.warn('No types found in response');
+              resolve(['Unknown']); // 如果 types 不存在，返回默认值
+            }
           } catch (parseErr) {
             console.error('JSON Parse Error:', parseErr);
             reject(parseErr); // 解析失败，拒绝 Promise
@@ -81,6 +93,8 @@ class PokemonDataSource {
       });
     });
   }
+
+
 
 
   async fetchHttpCode(): Promise<number> {

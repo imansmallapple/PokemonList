@@ -23,46 +23,33 @@ struct Index {
       this.httpCode = code;
 
       if (code === 200) {
-        await source.getPokemonList().then(async (list) => {
-          this.pokeList = list;
+        // 获取宝可梦列表
+        const list = await source.getPokemonList();
+        this.pokeList = list;
 
-          for (let index = 0; index < list.length; index++) {
-            this.dataSet.pushData(list[index]);
-          }
-
-          // 设置图片 URL
-          this.pokeList.forEach((item, index) => {
-            this.pokeList[index].image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`;
-          });
-
-          // 使用 Promise.all 处理所有异步任务
-          const infoPromises = this.pokeList.map((item, index) =>
-          source.getPokemonInfo(index).then((response) => {
-            this.pokeList[index].detail = response;
-          })
-          );
-
-          await Promise.all(infoPromises); // 等待所有异步任务完成
-
-          // 打印每个宝可梦的类型
-          this.pokeList.forEach((item, index) => {
-            if (item.detail && item.detail.types) {
-              const types = item.detail.types.map((type) => {
-                if (type.type && type.type.name) {
-                  return type.type.name; // 确保安全访问
-                } else {
-                  return 'Unknown';
-                }
-              });
-
-              console.log(`Pokemon [${index}]:`, types.join(', '));
-            } else {
-              console.warn(`No types found for Pokemon [${index}]`);
-            }
-          });
+        // 初始化数据和图片 URL
+        this.pokeList.forEach((item, index) => {
+          this.dataSet.pushData(item);
+          this.pokeList[index].image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`;
         });
+
+        // 获取每个宝可梦的类型，并存储到 typeList
+        const infoPromises = this.pokeList.map((item, index) =>
+        source.getPokemonInfo(index).then((types) => {
+          this.typeList[index] = types; // 存储类型数组到二维数组 typeList
+        })
+        );
+
+        await Promise.all(infoPromises); // 等待所有异步任务完成
+
+        // 打印每个宝可梦的类型
+        this.typeList.forEach((types, index) => {
+          console.log(`Pokemon [${index}]:`, types.join(', '));
+        });
+
+        this.isLoading = false; // 加载完成
       } else {
-        this.isLoading = false;
+        this.isLoading = false; // 如果 HTTP 请求失败
         console.error('Failed to fetch data: HTTP Code', code);
       }
     });
@@ -80,7 +67,7 @@ struct Index {
           Text('Name')
           Text('Type')
         }
-
+        // todo: 在渲染数据的时候增加一秒延迟的页面让其缓冲
         List({ scroller: this.scroller }) {
           LazyForEach(this.dataSet, (item: Pokemon, index: number) => {
             ListItem() {
@@ -104,12 +91,12 @@ struct Index {
                 }
                 .width(90)
                 .margin({
-                  left: 30
+                  left: 20
                 })
 
                 Row() {
-                  // Text(this.typeList[index]?.join(', ') || 'No types available')
-                  Text(item.detail?.types?.map(type => type.type?.name).join(', '))
+                  Text(this.typeList[index]?.join(', ') || 'No types available')
+                  // Text(item.detail?.types?.map(type => type.type?.name).join(', '))
                 }
                 .layoutWeight(1)
               }
