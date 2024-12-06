@@ -1,4 +1,4 @@
-import { BASE_URL, PokemonDataSource } from '../data/DataSource';
+import { BASE_URL, PokemonDataSource, MyDataSource } from '../data/DataSource';
 import { Pokemon } from '../Model/Pokemon';
 
 @Entry
@@ -9,6 +9,7 @@ struct Index {
   @State pokeList: Pokemon[] = []
   @State pokeImage: string[] = []
   private scroller: Scroller = new Scroller()
+  @State dataSet: MyDataSource = new MyDataSource()
 
   aboutToAppear() {
     this.isLoading = true;
@@ -18,6 +19,10 @@ struct Index {
       if (code == 200) {
         PokemonDataSource.getPokemonList((data: Pokemon[]) => {
           this.pokeList = data
+          // console.log(data.length.toString())
+          for (let index = 0; index < data.length; index++) {
+            this.dataSet.pushData(data[index])
+          }
           this.pokeList.forEach((item, index: number) => {
             this.pokeImage[index] = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon' + `/${index + 1}.png`
             // console.log(this.pokeImage[index])
@@ -43,7 +48,7 @@ struct Index {
         }
 
         List({ scroller: this.scroller }) {
-          ForEach(this.pokeList, (item: Pokemon, index: number) => {
+          LazyForEach(this.dataSet, (item: Pokemon, index: number) => {
             ListItem() {
               Row({ space: 20 }) {
                 Row() {
