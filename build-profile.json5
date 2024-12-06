@@ -1,0 +1,49 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "material": {
+          "certpath": "C:/Users/c84381641/.ohos/config/openharmony/default_PokemonList_AUJVSrQ4mrSytPugI8KwrubkfZYFsR4rO3zbDoywn2M=.cer",
+          "storePassword": "0000001A5F500FE9A4A3793F423E528F726A4643F5CCF4C6C515FC17FB2ED8B913250764833EDF746372",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A5D61E4CDDF479F416BCEB8C23F2DBE0CD9FE2842A3A24C240009CD6000FC276FEE5E30FFAC01",
+          "profile": "C:/Users/c84381641/.ohos/config/openharmony/default_PokemonList_AUJVSrQ4mrSytPugI8KwrubkfZYFsR4rO3zbDoywn2M=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:/Users/c84381641/.ohos/config/openharmony/default_PokemonList_AUJVSrQ4mrSytPugI8KwrubkfZYFsR4rO3zbDoywn2M=.p12"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compileSdkVersion": 11,
+        "compatibleSdkVersion": 11,
+        "runtimeOS": "OpenHarmony",
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}
