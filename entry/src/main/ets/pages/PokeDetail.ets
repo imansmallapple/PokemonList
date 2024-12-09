@@ -24,6 +24,7 @@ struct PokeDetail {
   @State types: string[] = []
   @State abilities: AbilityInfo[] = []
   @State pokeEvolution: EvolutionData = new EvolutionData()
+  @State evolutionSpecies: string[] = []
 
   onPageShow() {
     const params = router.getParams() as RouterParams
@@ -46,9 +47,16 @@ struct PokeDetail {
           // 异步获取宝可梦信息
           this.pokeInfo = await source.getPokemonInfo(this.pokeId - 1);
 
-          // 异步获取宝可梦进化链
-          // this.pokeEvolution = await source.getEvolutionChain(this.pokeId - 1);
+          //Get evolution chain url
+          const url: string = await source.getEvolutionUrl(this.pokeId)
 
+          // 异步获取宝可梦进化链
+          this.pokeEvolution = await source.getEvolutionChain(url);
+
+
+          // console.info(`url: ${url}`)
+          // 提取进化链物种名称
+          this.evolutionSpecies = this.extractSpeciesNames(this.pokeEvolution.chain as EvolutionChain)
           // 提取类型名称并存储为字符串数组
           if (Array.isArray(this.pokeInfo.types)) {
             this.types = this.pokeInfo.types.map((type) => {
@@ -60,9 +68,6 @@ struct PokeDetail {
           if (Array.isArray(this.pokeInfo.abilities)) {
             this.abilities = this.pokeInfo.abilities
           }
-          // console.info(`${this.pokeEvolution}`)
-          //Fetch Pokemon evolution chain
-
 
         } catch (error) {
           console.error('Error fetching Pokémon info:', error);
@@ -74,6 +79,15 @@ struct PokeDetail {
         console.error('Failed to fetch data: HTTP Code', code);
       }
     });
+  }
+
+  // 提取物种名称的递归方法
+  extractSpeciesNames(chain: EvolutionChain, result: string[] = []): string[] {
+    result.push(chain.species.name);
+    chain.evolves_to.forEach((nextChain) => {
+      this.extractSpeciesNames(nextChain, result);
+    });
+    return result;
   }
 
   @Builder
@@ -287,6 +301,13 @@ struct PokeDetail {
           Text("Evolution Chart")
             .fontWeight(600)
             .fontSize(20)
+          Column() {
+            ForEach(this.evolutionSpecies, (item: string) => {
+              Text(item)
+                .fontSize(16)
+                .padding({ top: 5 });
+            });
+          }
         }
         .width('100%')
       }

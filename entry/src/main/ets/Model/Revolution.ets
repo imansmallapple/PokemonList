@@ -42,6 +42,14 @@
 //   id: number;
 // }
 
+interface PokemonSpecies {
+  evolution_chain: EvolutionChainUrl;
+}
+
+interface EvolutionChainUrl {
+  url: string;
+}
+
 class Species {
   name: string;
   url: string;
@@ -158,4 +166,4 @@ class EvolutionDetail {
   }
 }
 
-export { EvolutionTrigger, EvolutionDetail, EvolutionChain, EvolutionData, Species }
+export { PokemonSpecies, EvolutionChainUrl, EvolutionTrigger, EvolutionDetail, EvolutionChain, EvolutionData, Species }
