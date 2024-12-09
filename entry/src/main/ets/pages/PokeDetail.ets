@@ -1,6 +1,6 @@
 import router from '@ohos.router';
 import { PokemonDataSource } from '../data/DataSource';
-import { PokeInformation, Pokemon } from '../Model/Pokemon';
+import { Ability, AbilityInfo, PokeInformation, Pokemon } from '../Model/Pokemon';
 import { heightConverter, weightConverter } from '../utils/unitFormatConverter';
 import { LoadComponent } from './Index'
 
@@ -21,6 +21,7 @@ struct PokeDetail {
   @State image: string = ''
   @State pokeInfo: PokeInformation = new PokeInformation()
   @State types: string[] = []
+  @State abilities: AbilityInfo[] = []
 
   onPageShow() {
     const params = router.getParams() as RouterParams
@@ -44,10 +45,13 @@ struct PokeDetail {
           this.pokeInfo = await source.getPokemonInfo(this.pokeId - 1);
 
           // 提取类型名称并存储为字符串数组
-          if (this.pokeInfo.types && Array.isArray(this.pokeInfo.types)) {
+          if (Array.isArray(this.pokeInfo.types)) {
             this.types = this.pokeInfo.types.map((type) => {
               return type.type?.name || 'Unknown'; // 提取类型名称
             });
+          }
+          if (Array.isArray(this.pokeInfo.abilities)) {
+            this.abilities = this.pokeInfo.abilities
           }
         } catch (error) {
           console.error('Error fetching Pokémon info:', error);
@@ -151,7 +155,7 @@ struct PokeDetail {
   }
 
   build() {
-    Column() {
+    Column({ space: 10 }) {
       Navigation()
         .title(this.NavigationTitle())
         .hideToolBar(true)
@@ -235,6 +239,46 @@ struct PokeDetail {
       .borderRadius(20)
       .borderWidth(1)
       .borderColor('#68645c5c')
+
+      Column({ space: 5 }) {
+        Row() {
+          Text("Abilities")
+            .fontWeight(600)
+            .fontSize(20)
+        }
+        .width('100%')
+
+        ForEach(this.abilities, (item: AbilityInfo) => {
+          Row() {
+            if (item.is_hidden == true) {
+              Text(`${item.ability.name} `)
+                .fontWeight(500)
+                .fontSize(18)
+              Text('(Hidden Ability)')
+                .fontColor('#3c000000')
+                .fontWeight(500)
+                .fontSize(18)
+            }
+            else {
+              Text(`${item.ability.name}`)
+                .fontWeight(500)
+                .fontSize(18)
+            }
+          }
+          .width('100%')
+        })
+      }
+      .width('100%')
+      .borderWidth(1)
+
+      Column({space: 5}){
+        Row() {
+          Text("Evolution Chart")
+            .fontWeight(600)
+            .fontSize(20)
+        }
+        .width('100%')
+      }
 
     }
     .height('100%')
