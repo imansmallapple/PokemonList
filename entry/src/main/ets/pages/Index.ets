@@ -17,6 +17,7 @@ struct Index {
 
   aboutToAppear() {
     this.isLoading = true;
+
     const source = new PokemonDataSource();
 
     source.fetchHttpCode().then(async (code) => {
@@ -61,13 +62,15 @@ struct Index {
   build() {
     Row() {
       Column() {
+        if (this.isLoading) {
+          LoadComponent() // 显示加载组件
+        }
         Row({ space: 60 }) {
           Text(`No.`)
           Text('Image')
           Text('Name')
           Text('Type')
         }
-        // todo: 在渲染数据的时候增加一秒延迟的页面让其缓冲
         List({ scroller: this.scroller }) {
           LazyForEach(this.dataSet, (item: Pokemon, index: number) => {
             ListItem() {
@@ -79,7 +82,6 @@ struct Index {
                 .margin({
                   left: 30
                 })
-
                 Row() {
                   Image(item.image)
                     .width(40)
@@ -104,6 +106,9 @@ struct Index {
               .height('8%')
               .justifyContent(FlexAlign.Start)
             }
+            .onClick(()=>{
+              console.info('Clicked')
+            })
           })
         }
 
@@ -112,5 +117,19 @@ struct Index {
       .width('100%')
     }
     .height('100%')
+  }
+}
+
+@Component
+export struct LoadComponent {
+  build() {
+    Column() {
+      LoadingProgress()
+        .color(Color.Blue)
+        .width(50)
+        .margin({ bottom: '10%' })
+    }
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
   }
 }
