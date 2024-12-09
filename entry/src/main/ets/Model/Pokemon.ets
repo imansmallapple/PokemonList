@@ -45,7 +45,8 @@ interface PokeInfo {
   height: number,
   weight: number,
   name: string,
-  types?: PokeTypeContent[],
+  types: PokeTypeContent[],
+  abilities: AbilityInfo[],
 }
 
 
@@ -56,7 +57,23 @@ class PokeInformation implements PokeInfo {
   weight: number = 0
   id = 0
   name: string = ''
-  types?: PokeTypeContent[] = []
+  types: PokeTypeContent[] = []
+  abilities: AbilityInfo[] = []
 }
 
-export { Pokemon, PokeInfo, PokemonResponse, PokeType, PokeInformation, PokeTypeContent }
+interface AbilityInfo{
+  ability: Ability
+  is_hidden: boolean
+  slot: number
+}
+
+// interface AbilityDetail{
+//
+// }
+
+class Ability {
+  name: string = ''
+  url: string = ''
+}
+
+export { AbilityInfo, Ability, Pokemon, PokeInfo, PokemonResponse, PokeType, PokeInformation, PokeTypeContent }
