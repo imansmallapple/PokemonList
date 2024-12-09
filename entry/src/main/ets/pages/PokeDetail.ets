@@ -1,8 +1,8 @@
 import router from '@ohos.router';
 import { PokemonDataSource } from '../data/DataSource';
 import { Ability, AbilityInfo, PokeInformation, Pokemon } from '../Model/Pokemon';
-import { EvolutionChain, EvolutionData } from '../Model/Revolution';
-import { heightConverter, weightConverter } from '../utils/unitFormatConverter';
+import { EvolutionChain, EvolutionData, Species } from '../Model/Revolution';
+import { extractLastNumber, heightConverter, weightConverter } from '../utils/unitFormatConverter';
 import { LoadComponent } from './Index'
 
 export interface RouterParams {
@@ -24,7 +24,7 @@ struct PokeDetail {
   @State types: string[] = []
   @State abilities: AbilityInfo[] = []
   @State pokeEvolution: EvolutionData = new EvolutionData()
-  @State evolutionSpecies: string[] = []
+  @State evolutionSpecies: Species[] = []
 
   onPageShow() {
     const params = router.getParams() as RouterParams
@@ -82,8 +82,11 @@ struct PokeDetail {
   }
 
   // 提取物种名称的递归方法
-  extractSpeciesNames(chain: EvolutionChain, result: string[] = []): string[] {
-    result.push(chain.species.name);
+  extractSpeciesNames(chain: EvolutionChain, result: Species[] = []): Species[] {
+    result.push({
+      name: chain.species.name,
+      url: chain.species.url
+    });
     chain.evolves_to.forEach((nextChain) => {
       this.extractSpeciesNames(nextChain, result);
     });
@@ -272,6 +275,7 @@ struct PokeDetail {
             .fontSize(20)
         }
         .width('100%')
+        .justifyContent(FlexAlign.Center)
 
         ForEach(this.abilities, (item: AbilityInfo) => {
           Row() {
@@ -290,6 +294,7 @@ struct PokeDetail {
                 .fontSize(18)
             }
           }
+          .margin(10)
           .width('100%')
         })
       }
@@ -301,16 +306,29 @@ struct PokeDetail {
           Text("Evolution Chart")
             .fontWeight(600)
             .fontSize(20)
-          Column() {
-            ForEach(this.evolutionSpecies, (item: string) => {
-              Text(item)
-                .fontSize(16)
-                .padding({ top: 5 });
-            });
-          }
         }
         .width('100%')
+        .justifyContent(FlexAlign.Center)
+
+        Row({ space: 5 }) {
+          ForEach(this.evolutionSpecies, (item: Species) => {
+            Column() {
+              Image(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${extractLastNumber(item.url)}.png`) // 显示图片
+                .width(80)    // 设置图片宽度
+                .height(80)   // 设置图片高度
+              Text(item.name) // 显示宝可梦名称
+                .fontSize(16)
+                .padding({ top: 5 });
+              Text(`No. ${extractLastNumber(item.url)}`) // 显示编号
+                .fontSize(14)
+                .fontColor('#666');
+            }
+            .margin({ left: 10, right: 10 }) // 每个宝可梦间距
+          });
+
+        }
       }
+      .width('100%')
 
     }
     .height('100%')
