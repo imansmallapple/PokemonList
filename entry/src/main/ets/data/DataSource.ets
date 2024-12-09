@@ -1,5 +1,5 @@
 import { Pokemon, PokemonResponse, PokeInfo, PokeInformation } from '../Model/Pokemon';
-import { EvolutionData } from '../Model/Revolution'
+import { EvolutionData, EvolutionChainUrl, PokemonSpecies } from '../Model/Revolution'
 import http from '@ohos.net.http';
 
 const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1000"
@@ -86,10 +86,33 @@ class PokemonDataSource {
     });
   }
 
-  async getEvolutionChain(index: number): Promise<EvolutionData> {
+  async getEvolutionUrl(index: number): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      let httpRequest = http.createHttp();
+      httpRequest.request(`https://pokeapi.co/api/v2/pokemon-species/${index}/`, (err, data) => {
+        if (!err) {
+          try {
+            // 尝试解析返回数据
+            let responseData: PokemonSpecies = JSON.parse(data.result as string);
+            let res = responseData.evolution_chain.url
+            console.info(res)
+            resolve(res); // 成功返回进化链信息
+          } catch (parseErr) {
+            console.error('JSON Parse Error:', parseErr);
+            reject(parseErr); // 解析失败，拒绝 Promise
+          }
+        } else {
+          console.error('HTTP Error:', err);
+          reject(err); // 请求失败，拒绝 Promise
+        }
+      });
+    });
+  }
+
+  async getEvolutionChain(url: string): Promise<EvolutionData> {
     return new Promise<EvolutionData>((resolve, reject) => {
       let httpRequest = http.createHttp();
-      httpRequest.request(`https://pokeapi.co/api/v2/evolution-chain/${index}/`, (err, data) => {
+      httpRequest.request(`${url}`, (err, data) => {
         if (!err) {
           try {
             // 尝试解析返回数据
