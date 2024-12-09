@@ -1,6 +1,7 @@
 import { BASE_URL, PokemonDataSource, MyDataSource } from '../data/DataSource';
-import { Pokemon, PokeInfo, PokeTypeContent, PokeType } from '../Model/Pokemon';
+import { Pokemon, PokeInformation,PokeInfo, PokeTypeContent, PokeType } from '../Model/Pokemon';
 import { BusinessError } from '@ohos.base';
+import router from '@ohos.router';
 
 @Entry
 @Component
@@ -36,7 +37,7 @@ struct Index {
 
         // 获取每个宝可梦的类型，并存储到 typeList
         const infoPromises = this.pokeList.map((item, index) =>
-        source.getPokemonInfo(index).then((types) => {
+        source.getPokemonType(index).then((types) => {
           this.typeList[index] = types; // 存储类型数组到二维数组 typeList
         })
         );
@@ -44,9 +45,9 @@ struct Index {
         await Promise.all(infoPromises); // 等待所有异步任务完成
 
         // 打印每个宝可梦的类型
-        this.typeList.forEach((types, index) => {
-          console.log(`Pokemon [${index}]:`, types.join(', '));
-        });
+        // this.typeList.forEach((types, index) => {
+        //   console.log(`Pokemon [${index}]:`, types.join(', '));
+        // });
 
         this.isLoading = false; // 加载完成
       } else {
@@ -62,9 +63,11 @@ struct Index {
   build() {
     Row() {
       Column() {
-        if (this.isLoading) {
-          LoadComponent() // 显示加载组件
-        }
+
+        //todo: to be uncommented
+        // if (this.isLoading) {
+        //   LoadComponent() // 显示加载组件
+        // }
         Row({ space: 60 }) {
           Text(`No.`)
           Text('Image')
@@ -107,7 +110,15 @@ struct Index {
               .justifyContent(FlexAlign.Start)
             }
             .onClick(()=>{
-              console.info('Clicked')
+              router.pushUrl({
+                url: 'pages/PokeDetail',
+                params:{
+                  id: index+1,
+                  name: item.name,
+                  image: item.image,
+                }
+              })
+              console.info(`item id: ${index+1}`)
             })
           })
         }
