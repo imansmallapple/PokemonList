@@ -87,7 +87,7 @@ struct Index {
                 })
                 Row() {
                   Image(item.image)
-                    .width(40)
+                    .width(50)
                 }
                 .width(50)
 

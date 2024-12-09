@@ -40,34 +40,22 @@ interface VersionGroup {
 }
 
 interface PokeInfo {
-  form_name?: string,
-  form_names?: string[],
-  form_order?: number,
   id: number,
-  is_battle_only: boolean,
   is_default: boolean,
-  is_mega: boolean,
+  height: number,
+  weight: number,
   name: string,
-  names?: string[],
-  order?: number,
-  pokemon?: Pokemon,
-  sprites?: Sprites,
   types?: PokeTypeContent[],
-  version_group?: VersionGroup,
 }
 
 
 class PokeInformation implements PokeInfo {
+  is_default: boolean = false
   form_name: string = ''
-  form_names: string[] = []
-  form_order = 0
+  height: number = 0
+  weight: number = 0
   id = 0
-  is_battle_only = false
-  is_default = false
-  is_mega = false
   name: string = ''
-  names: string[] = []
-  order = 0
   types?: PokeTypeContent[] = []
 }
 

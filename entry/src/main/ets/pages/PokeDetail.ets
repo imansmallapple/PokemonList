@@ -1,6 +1,7 @@
 import router from '@ohos.router';
 import { PokemonDataSource } from '../data/DataSource';
 import { PokeInformation, Pokemon } from '../Model/Pokemon';
+import { heightConverter, weightConverter } from '../utils/unitFormatConverter';
 import { LoadComponent } from './Index'
 
 export interface RouterParams {
@@ -53,11 +54,6 @@ struct PokeDetail {
         } finally {
           this.isLoading = false; // 确保加载状态正确更新
         }
-        //
-        // //todo: get pokeInfo
-        // this.pokeInfo = await source.getPokemonInfo(this.pokeId + 1)
-        //
-        // this.isLoading = false; // 加载完成
       } else {
         this.isLoading = false; // 如果 HTTP 请求失败
         console.error('Failed to fetch data: HTTP Code', code);
@@ -68,7 +64,7 @@ struct PokeDetail {
   @Builder
   NavigationTitle() {
     Column() {
-      Text(`${this.pokeName}`)
+      Text('Pokemon Data')
         .fontColor('#182431')
         .fontSize(26)
         .fontWeight(500)
@@ -77,6 +73,81 @@ struct PokeDetail {
     .alignItems(HorizontalAlign.Start)
     .height('100%')
     .width('100%')
+  }
+
+  @Builder
+  PokemonTypes() {
+    // 使用 forEach 遍历数组并渲染每个类型
+    ForEach(this.types, (item: string) => {
+      if (item == 'grass') {
+        Text(`${item}`)
+          .typeStyle(Color.Green, Color.White)
+      }
+      else if (item == 'poison') {
+        Text(`${item}`)
+          .typeStyle('#ff82139f', Color.White)
+      }
+      else if (item == 'flying') {
+        Text(`${item}`)
+          .typeStyle('#ffb8afb8')
+      }
+      else if (item == 'bug') {
+        Text(`${item}`)
+          .typeStyle('#ff1f7033', Color.White)
+      }
+      else if (item == 'fire') {
+        Text(`${item}`)
+          .typeStyle('#ffbe4110', Color.White)
+      }
+      else if (item == 'ice') {
+        Text(`${item}`)
+          .typeStyle('#ff69b4ea')
+      }
+      else if (item == 'ground') {
+        Text(`${item}`)
+          .typeStyle('#ff6b5326', Color.White)
+      }
+      else if (item == 'rock') {
+        Text(`${item}`)
+          .typeStyle('#ff726035', Color.White)
+      }
+      else if (item == 'water') {
+        Text(`${item}`)
+          .typeStyle('#ff0561ab', Color.White)
+      }
+      else if (item == 'electric') {
+        Text(`${item}`)
+          .typeStyle('#ffe7e434', Color.White)
+      }
+      else if (item == 'steel') {
+        Text(`${item}`)
+          .typeStyle('#ff82139f', Color.White)
+      }
+      else if (item == 'dragon') {
+        Text(`${item}`)
+          .typeStyle('#ff82139f', Color.White)
+      }
+      else if (item == 'normal') {
+        Text(`${item}`)
+          .typeStyle('#ff5f5d5f', Color.White)
+      }
+      else if (item == 'fairy') {
+        Text(`${item}`)
+          .typeStyle('#ffa72ca7', Color.White)
+      }
+      else if (item == 'fighting') {
+        Text(`${item}`)
+          .typeStyle('#ffb05804', Color.White)
+      }
+      else if (item == 'psychic') {
+        Text(`${item}`)
+          .typeStyle('#ffd42dd4', Color.White)
+      }
+      else if (item == 'ghost') {
+        Text(`${item}`)
+          .typeStyle('#ff660566', Color.White)
+      }
+    })
   }
 
   build() {
@@ -92,14 +163,101 @@ struct PokeDetail {
         LoadComponent() // 显示加载组件
       }
 
-      Text(`${this.pokeName}`)
-      Text(`${this.pokeId}`)
-      Image(this.image)
-        .width(100)
-      Text(`${this.pokeInfo.is_default}`)
-      Text(`detail info: ${this.types}`)
+      Row() {
+        Column() {
+          Image(this.image)
+            .width(150)
+            .height(150)
+        }
+        .justifyContent(FlexAlign.Center)
+        .width('40%')
+        .height('100%')
+
+        Column({ space: 10 }) {
+          Row() {
+            Text(`${this.pokeName}`)
+              .fontWeight(800)
+              .fontSize(25)
+          }
+          .width('100%')
+          .justifyContent(FlexAlign.Center)
+
+          Row() {
+            Text('No.')
+              .labelStyle()
+            Text(`${this.pokeId}`)
+              .fontWeight(600)
+          }
+          .width('100%')
+
+          Divider()
+            .strokeWidth(1)
+
+          Row() {
+            Text('Type')
+              .fontColor('#56000000')
+              .fontWeight(700)
+            this.PokemonTypes()
+          }
+          .width('100%')
+
+          Divider()
+            .strokeWidth(1)
+          Row() {
+            Text('Height')
+              .labelStyle()
+            Text(`${heightConverter(this.pokeInfo.height)} m`)
+              .fontWeight(600)
+          }
+          .width('100%')
+
+          Divider()
+            .strokeWidth(1)
+          Row() {
+            Text('Weight')
+              .labelStyle()
+            Text(`${weightConverter(this.pokeInfo.weight)} kg`)
+              .fontWeight(600)
+          }
+          .width('100%')
+
+          Divider()
+            .strokeWidth(1)
+        }
+        .width('60%')
+        .height('100%')
+        .justifyContent(FlexAlign.Start)
+        .alignItems(HorizontalAlign.Start)
+      }
+      .justifyContent(FlexAlign.Start)
+      .width('100%')
+      .height('30%')
+      .borderRadius(20)
+      .borderWidth(1)
+      .borderColor('#68645c5c')
+
     }
     .height('100%')
     .width('100%')
   }
+}
+
+@Extend(Text)
+function typeStyle(backgroundColor: ResourceColor | string, fontColor?: ResourceColor | string) {
+  .fontWeight(600)
+  .margin({
+    left: 10,
+    right: 10
+  })
+  .fontColor(fontColor)
+  .padding(10)
+  .backgroundColor(backgroundColor)
+  .borderRadius(10)
+}
+
+@Extend(Text)
+function labelStyle() {
+  .fontColor('#56000000')
+  .width('40%')
+  .fontWeight(700)
 }
