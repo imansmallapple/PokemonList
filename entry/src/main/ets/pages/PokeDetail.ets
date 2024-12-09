@@ -25,6 +25,7 @@ struct PokeDetail {
   @State abilities: AbilityInfo[] = []
   @State pokeEvolution: EvolutionData = new EvolutionData()
   @State evolutionSpecies: Species[] = []
+  private scroller: Scroller = new Scroller()
 
   onPageShow() {
     const params = router.getParams() as RouterParams
@@ -191,145 +192,157 @@ struct PokeDetail {
         .width('100%')
         .titleMode(NavigationTitleMode.Mini)
         .hideBackButton(false)
-      if (this.isLoading) {
-        LoadComponent() // 显示加载组件
-      }
-
-      Row() {
+      Scroll() {
         Column() {
-          Image(this.image)
-            .width(150)
-            .height(150)
-        }
-        .justifyContent(FlexAlign.Center)
-        .width('40%')
-        .height('100%')
-
-        Column({ space: 10 }) {
-          Row() {
-            Text(`${this.pokeName}`)
-              .fontWeight(800)
-              .fontSize(25)
+          if (this.isLoading) {
+            LoadComponent() // 显示加载组件
           }
-          .width('100%')
-          .justifyContent(FlexAlign.Center)
-
           Row() {
-            Text('No.')
-              .labelStyle()
-            Text(`${this.pokeId}`)
-              .fontWeight(600)
-          }
-          .width('100%')
-
-          Divider()
-            .strokeWidth(1)
-
-          Row() {
-            Text('Type')
-              .fontColor('#56000000')
-              .fontWeight(700)
-            this.PokemonTypes()
-          }
-          .width('100%')
-
-          Divider()
-            .strokeWidth(1)
-          Row() {
-            Text('Height')
-              .labelStyle()
-            Text(`${heightConverter(this.pokeInfo.height)} m`)
-              .fontWeight(600)
-          }
-          .width('100%')
-
-          Divider()
-            .strokeWidth(1)
-          Row() {
-            Text('Weight')
-              .labelStyle()
-            Text(`${weightConverter(this.pokeInfo.weight)} kg`)
-              .fontWeight(600)
-          }
-          .width('100%')
-
-          Divider()
-            .strokeWidth(1)
-        }
-        .width('60%')
-        .height('100%')
-        .justifyContent(FlexAlign.Start)
-        .alignItems(HorizontalAlign.Start)
-      }
-      .justifyContent(FlexAlign.Start)
-      .width('100%')
-      .height('30%')
-      .borderRadius(20)
-      .borderWidth(1)
-      .borderColor('#68645c5c')
-
-      Column({ space: 5 }) {
-        Row() {
-          Text("Abilities")
-            .fontWeight(600)
-            .fontSize(20)
-        }
-        .width('100%')
-        .justifyContent(FlexAlign.Center)
-
-        ForEach(this.abilities, (item: AbilityInfo) => {
-          Row() {
-            if (item.is_hidden == true) {
-              Text(`${item.ability.name} `)
-                .fontWeight(500)
-                .fontSize(18)
-              Text('(Hidden Ability)')
-                .fontColor('#3c000000')
-                .fontWeight(500)
-                .fontSize(18)
-            }
-            else {
-              Text(`${item.ability.name}`)
-                .fontWeight(500)
-                .fontSize(18)
-            }
-          }
-          .margin(10)
-          .width('100%')
-        })
-      }
-      .width('100%')
-      .borderWidth(1)
-
-      Column({ space: 5 }) {
-        Row() {
-          Text("Evolution Chart")
-            .fontWeight(600)
-            .fontSize(20)
-        }
-        .width('100%')
-        .justifyContent(FlexAlign.Center)
-
-        Row({ space: 5 }) {
-          ForEach(this.evolutionSpecies, (item: Species) => {
             Column() {
-              Image(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${extractLastNumber(item.url)}.png`) // 显示图片
-                .width(80)    // 设置图片宽度
-                .height(80)   // 设置图片高度
-              Text(item.name) // 显示宝可梦名称
-                .fontSize(16)
-                .padding({ top: 5 });
-              Text(`No. ${extractLastNumber(item.url)}`) // 显示编号
-                .fontSize(14)
-                .fontColor('#666');
+              Image(this.image)
+                .width(150)
+                .height(150)
             }
-            .margin({ left: 10, right: 10 }) // 每个宝可梦间距
-          });
+            .justifyContent(FlexAlign.Center)
+            .width('40%')
+            .height('100%')
 
+            Column({ space: 10 }) {
+              Row() {
+                Text(`${this.pokeName}`)
+                  .fontWeight(800)
+                  .fontSize(25)
+              }
+              .width('100%')
+              .justifyContent(FlexAlign.Center)
+
+              Row() {
+                Text('No.')
+                  .labelStyle()
+                Text(`${this.pokeId}`)
+                  .fontWeight(600)
+              }
+              .width('100%')
+
+              Divider()
+                .strokeWidth(1)
+
+              Row() {
+                Text('Type')
+                  .fontColor('#56000000')
+                  .fontWeight(700)
+                this.PokemonTypes()
+              }
+              .width('100%')
+
+              Divider()
+                .strokeWidth(1)
+              Row() {
+                Text('Height')
+                  .labelStyle()
+                Text(`${heightConverter(this.pokeInfo.height)} m`)
+                  .fontWeight(600)
+              }
+              .width('100%')
+
+              Divider()
+                .strokeWidth(1)
+              Row() {
+                Text('Weight')
+                  .labelStyle()
+                Text(`${weightConverter(this.pokeInfo.weight)} kg`)
+                  .fontWeight(600)
+              }
+              .width('100%')
+
+              Divider()
+                .strokeWidth(1)
+            }
+            .width('60%')
+            .height('100%')
+            .justifyContent(FlexAlign.Start)
+            .alignItems(HorizontalAlign.Start)
+          }
+          .justifyContent(FlexAlign.Start)
+          .width('100%')
+          .height('30%')
+          .borderRadius(20)
+          .borderWidth(1)
+          .borderColor('#68645c5c')
+
+          Column({ space: 5 }) {
+            Row() {
+              Text("Abilities")
+                .fontWeight(600)
+                .fontSize(20)
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+
+            ForEach(this.abilities, (item: AbilityInfo) => {
+              Row() {
+                if (item.is_hidden == true) {
+                  Text(`${item.ability.name} `)
+                    .fontWeight(500)
+                    .fontSize(18)
+                  Text('(Hidden Ability)')
+                    .fontColor('#3c000000')
+                    .fontWeight(500)
+                    .fontSize(18)
+                }
+                else {
+                  Text(`${item.ability.name}`)
+                    .fontWeight(500)
+                    .fontSize(18)
+                }
+              }
+              .margin(10)
+              .width('100%')
+            })
+          }
+          .width('100%')
+          .borderWidth(1)
+
+          Column({ space: 5 }) {
+            Row() {
+              Text("Evolution Chart")
+                .fontWeight(600)
+                .fontSize(20)
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.Center)
+
+            Scroll() {
+              Row({ space: 5 }) {
+                List({ scroller: this.scroller }) {
+                  ForEach(this.evolutionSpecies, (item: Species) => {
+                    ListItem() {
+                      Column() {
+                        Image(`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${extractLastNumber(item.url)}.png`)// 显示图片
+                          .width(80)// 设置图片宽度
+                          .height(80) // 设置图片高度
+                        Text(item.name)// 显示宝可梦名称
+                          .fontSize(16)
+                          .padding({ top: 5 });
+                        Text(`No. ${extractLastNumber(item.url)}`)// 显示编号
+                          .fontSize(14)
+                          .fontColor('#666');
+                      }
+                      .margin({ left: 10, right: 10 }) // 每个宝可梦间距
+                    }
+                  });
+                }
+                .height('20%')
+                .listDirection(Axis.Horizontal)
+              }
+            }
+            .width('100%')
+          }
+          .margin({
+            top: 40
+          })
         }
       }
-      .width('100%')
-
     }
     .height('100%')
     .width('100%')
