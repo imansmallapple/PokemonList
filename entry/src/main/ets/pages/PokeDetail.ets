@@ -1,6 +1,7 @@
 import router from '@ohos.router';
 import { PokemonDataSource } from '../data/DataSource';
 import { Ability, AbilityInfo, PokeInformation, Pokemon } from '../Model/Pokemon';
+import { EvolutionChain, EvolutionData } from '../Model/Revolution';
 import { heightConverter, weightConverter } from '../utils/unitFormatConverter';
 import { LoadComponent } from './Index'
 
@@ -22,6 +23,7 @@ struct PokeDetail {
   @State pokeInfo: PokeInformation = new PokeInformation()
   @State types: string[] = []
   @State abilities: AbilityInfo[] = []
+  @State pokeEvolution: EvolutionData = new EvolutionData()
 
   onPageShow() {
     const params = router.getParams() as RouterParams
@@ -44,15 +46,24 @@ struct PokeDetail {
           // 异步获取宝可梦信息
           this.pokeInfo = await source.getPokemonInfo(this.pokeId - 1);
 
+          // 异步获取宝可梦进化链
+          // this.pokeEvolution = await source.getEvolutionChain(this.pokeId - 1);
+
           // 提取类型名称并存储为字符串数组
           if (Array.isArray(this.pokeInfo.types)) {
             this.types = this.pokeInfo.types.map((type) => {
               return type.type?.name || 'Unknown'; // 提取类型名称
             });
           }
+
+          //Fetch Pokemon abilities
           if (Array.isArray(this.pokeInfo.abilities)) {
             this.abilities = this.pokeInfo.abilities
           }
+          // console.info(`${this.pokeEvolution}`)
+          //Fetch Pokemon evolution chain
+
+
         } catch (error) {
           console.error('Error fetching Pokémon info:', error);
         } finally {
@@ -271,7 +282,7 @@ struct PokeDetail {
       .width('100%')
       .borderWidth(1)
 
-      Column({space: 5}){
+      Column({ space: 5 }) {
         Row() {
           Text("Evolution Chart")
             .fontWeight(600)

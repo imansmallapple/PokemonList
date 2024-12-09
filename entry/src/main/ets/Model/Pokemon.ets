@@ -67,13 +67,12 @@ interface AbilityInfo{
   slot: number
 }
 
-// interface AbilityDetail{
-//
-// }
-
 class Ability {
   name: string = ''
   url: string = ''
 }
+
+
+
 
 export { AbilityInfo, Ability, Pokemon, PokeInfo, PokemonResponse, PokeType, PokeInformation, PokeTypeContent }

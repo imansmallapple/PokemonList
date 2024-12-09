@@ -118,7 +118,7 @@ struct Index {
                   image: item.image,
                 }
               })
-              console.info(`item id: ${index+1}`)
+              // console.info(`item id: ${index+1}`)
             })
           })
         }
