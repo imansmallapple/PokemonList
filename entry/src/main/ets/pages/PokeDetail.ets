@@ -24,9 +24,11 @@ struct PokeDetail {
   @State types: string[] = []
   @State abilities: AbilityInfo[] = []
   @State pokeEvolution: EvolutionData = new EvolutionData()
+  @State abilityUrlList: string[] = []
   @State evolutionSpecies: Species[] = []
   private scroller: Scroller = new Scroller()
 
+  // todo: 应该检查这些数据是从哪个页面传过来的，如果是技能介绍页面，增加一个简单的if判断
   onPageShow() {
     const params = router.getParams() as RouterParams
     this.localParams = params
@@ -68,6 +70,10 @@ struct PokeDetail {
           //Fetch Pokemon abilities
           if (Array.isArray(this.pokeInfo.abilities)) {
             this.abilities = this.pokeInfo.abilities
+            //Get current Pokemon's all ability detail's url route
+            this.abilities.forEach((item) => {
+              this.abilityUrlList.push(item.ability.url)
+            })
           }
 
         } catch (error) {
@@ -279,8 +285,9 @@ struct PokeDetail {
             .width('100%')
             .justifyContent(FlexAlign.Center)
 
-            ForEach(this.abilities, (item: AbilityInfo) => {
+            ForEach(this.abilities, (item: AbilityInfo, index: number) => {
               Row() {
+                // Text(`index:${index}`)
                 if (item.is_hidden == true) {
                   Text(`${item.ability.name} `)
                     .fontWeight(500)
@@ -298,6 +305,15 @@ struct PokeDetail {
               }
               .margin(10)
               .width('100%')
+              .onClick(() => {
+                router.pushUrl({
+                  url: 'pages/AbilityDetail',
+                  params: {
+                    url: this.abilityUrlList[index]
+                  }
+                })
+                // console.info(`Index:${index} clicked!`)
+              })
             })
           }
           .width('100%')

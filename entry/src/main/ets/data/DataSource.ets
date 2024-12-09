@@ -130,6 +130,10 @@ class PokemonDataSource {
       });
     });
   }
+// todo: to be implemented
+//   async getAbilityInfo(): Promise<>{
+//
+// }
 
   async fetchHttpCode(): Promise<number> {
     try {
