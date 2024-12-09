@@ -9,20 +9,6 @@ class PokemonDataSource {
   constructor() {
   }
 
-
-  // static getPokemonList(success: Function) {
-  //   let httpRequest = http.createHttp()
-  //   httpRequest.request(BASE_URL, (err, data) => {
-  //     if (!err) {
-  //       let responseData: PokemonResponse = JSON.parse(data.result as string)
-  //       let PokemonList: Pokemon[] = responseData.results
-  //       success(PokemonList)
-  //     } else {
-  //       // 请求失败，处理错误信息
-  //       console.log('Error: ' + err);
-  //     }
-  //   });
-  // }
   async getPokemonList(): Promise<Pokemon[]> {
     // 返回一个 Promise 来确保异步请求的结果可以正确传递
     return new Promise<Pokemon[]>((resolve, reject) => {
@@ -43,24 +29,6 @@ class PokemonDataSource {
     });
   }
 
-  // static getPokemonInfo(index: number, success: Function, failure?: Function) {
-  //   let httpRequest = http.createHttp();
-  //   httpRequest.request(`https://pokeapi.co/api/v2/pokemon/${index + 1}/`, (err, data) => {
-  //     if (!err) {
-  //       try {
-  //         // 尝试解析返回数据
-  //         let responseData: PokeInfo = JSON.parse(data.result as string);
-  //         success(responseData); // 成功时回调
-  //       } catch (parseErr) {
-  //         console.error('JSON Parse Error:', parseErr);
-  //         if (failure) failure(parseErr); // 调用失败回调
-  //       }
-  //     } else {
-  //       console.error('HTTP Error:', err);
-  //       if (failure) failure(err); // 调用失败回调
-  //     }
-  //   });
-  // }
   async getPokemonInfo(index: number): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
       let httpRequest = http.createHttp();
@@ -93,9 +61,6 @@ class PokemonDataSource {
       });
     });
   }
-
-
-
 
   async fetchHttpCode(): Promise<number> {
     try {
