@@ -2,7 +2,7 @@ interface Pokemon {
   name: string,
   url: string,
   detail?: PokeInfo,
-  type?: PokeType[],
+  type?: string[],
   image: string,
 }
 
@@ -56,4 +56,19 @@ interface PokeInfo {
   version_group?: VersionGroup,
 }
 
-export { Pokemon, PokemonResponse, PokeType, PokeInfo, PokeTypeContent }
+
+class PokeInformation implements PokeInfo {
+  form_name: string = ''
+  form_names: string[] = []
+  form_order = 0
+  id = 0
+  is_battle_only = false
+  is_default = false
+  is_mega = false
+  name: string = ''
+  names: string[] = []
+  order = 0
+  types?: PokeTypeContent[] = []
+}
+
+export { Pokemon, PokeInfo, PokemonResponse, PokeType, PokeInformation, PokeTypeContent }
