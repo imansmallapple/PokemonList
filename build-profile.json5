@@ -5,9 +5,9 @@
         "name": "default",
         "material": {
           "certpath": "C:/Users/c84381641/.ohos/config/openharmony/default_PokemonList_AUJVSrQ4mrSytPugI8KwrubkfZYFsR4rO3zbDoywn2M=.cer",
-          "storePassword": "0000001A5F500FE9A4A3793F423E528F726A4643F5CCF4C6C515FC17FB2ED8B913250764833EDF746372",
+          "storePassword": "0000001BB1B9FE1AD6D8E323EFB1C7C6D4478FBD11878BB449710FFF1F563DA18184A41604BCF1F84A5C24",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A5D61E4CDDF479F416BCEB8C23F2DBE0CD9FE2842A3A24C240009CD6000FC276FEE5E30FFAC01",
+          "keyPassword": "0000001BF1A5ABD486335744F15779CAACF720B2C1C471FAA92258AE3F1101F21F6A0632AC1C661CBF1E63",
           "profile": "C:/Users/c84381641/.ohos/config/openharmony/default_PokemonList_AUJVSrQ4mrSytPugI8KwrubkfZYFsR4rO3zbDoywn2M=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "C:/Users/c84381641/.ohos/config/openharmony/default_PokemonList_AUJVSrQ4mrSytPugI8KwrubkfZYFsR4rO3zbDoywn2M=.p12"
