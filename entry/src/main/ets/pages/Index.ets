@@ -57,9 +57,6 @@ struct Index {
     });
   }
 
-
-
-
   build() {
     Row() {
       Column() {
@@ -116,6 +113,7 @@ struct Index {
                   id: index+1,
                   name: item.name,
                   image: item.image,
+                  source: 'index',
                 }
               })
               // console.info(`item id: ${index+1}`)

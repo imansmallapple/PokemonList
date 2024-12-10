@@ -9,6 +9,7 @@ export interface RouterParams {
   id: number;
   name: string;
   image: string;
+  source?: string;
 }
 
 @Entry
@@ -27,14 +28,19 @@ struct PokeDetail {
   @State abilityUrlList: string[] = []
   @State evolutionSpecies: Species[] = []
   private scroller: Scroller = new Scroller()
+  @State source: string = ''
 
   // todo: 应该检查这些数据是从哪个页面传过来的，如果是技能介绍页面，增加一个简单的if判断
+  // todo: 考虑用appStorage存放当前的宝可梦信息
   onPageShow() {
     const params = router.getParams() as RouterParams
-    this.localParams = params
-    this.pokeName = params.name
-    this.pokeId = params.id
-    this.image = params.image
+    this.source = params.source as string
+    if (this.source == 'index') {
+      this.localParams = params
+      this.pokeName = params.name
+      this.pokeId = params.id
+      this.image = params.image
+    }
   }
 
   aboutToAppear() {
