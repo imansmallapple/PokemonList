@@ -1,6 +1,7 @@
 import { Pokemon, PokemonResponse, PokeInfo, PokeInformation } from '../Model/Pokemon';
 import { EvolutionData, EvolutionChainUrl, PokemonSpecies } from '../Model/Revolution'
 import http from '@ohos.net.http';
+import { AbilityData, EffectEntry, PokemonData } from '../Model/AbilityEffect';
 
 const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1000"
 
@@ -130,10 +131,48 @@ class PokemonDataSource {
       });
     });
   }
-// todo: to be implemented
-//   async getAbilityInfo(): Promise<>{
-//
-// }
+
+  async getAbilityInfo(url: string): Promise<EffectEntry[]> {
+    return new Promise<EffectEntry[]>((resolve, reject) => {
+      let httpRequest = http.createHttp();
+      httpRequest.request(`${url}`, (err, data) => {
+        if (!err) {
+          try {
+            let responseData: AbilityData = JSON.parse(data.result as string)
+            const res: EffectEntry[] = responseData.effect_entries
+            resolve(res)
+          } catch (parseErr) {
+            console.error('JSON Parse Error:', parseErr);
+            reject(parseErr);
+          }
+        } else {
+          console.error('HTTP Error:', err);
+          reject(err);
+        }
+      })
+    })
+  }
+
+  async getAbilityPokemon(url: string): Promise<PokemonData[]> {
+    return new Promise<PokemonData[]>((resolve, reject) => {
+      let httpRequest = http.createHttp();
+      httpRequest.request(`${url}`, (err, data) => {
+        if (!err) {
+          try {
+            let responseData: AbilityData = JSON.parse(data.result as string)
+            const res: PokemonData[] = responseData.pokemon
+            resolve(res)
+          } catch (parseErr) {
+            console.error('JSON Parse Error:', parseErr);
+            reject(parseErr);
+          }
+        } else {
+          console.error('HTTP Error:', err);
+          reject(err);
+        }
+      })
+    })
+  }
 
   async fetchHttpCode(): Promise<number> {
     try {

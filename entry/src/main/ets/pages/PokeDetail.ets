@@ -309,7 +309,8 @@ struct PokeDetail {
                 router.pushUrl({
                   url: 'pages/AbilityDetail',
                   params: {
-                    url: this.abilityUrlList[index]
+                    url: this.abilityUrlList[index],
+                    name: item.ability.name
                   }
                 })
                 // console.info(`Index:${index} clicked!`)
