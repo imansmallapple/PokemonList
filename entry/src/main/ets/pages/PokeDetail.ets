@@ -1,6 +1,6 @@
 import router from '@ohos.router';
 import { PokemonDataSource } from '../data/DataSource';
-import { Ability, AbilityInfo, PokeInformation, Pokemon } from '../Model/Pokemon';
+import { Ability, AbilityInfo, PokeInformation, Pokemon, PokeType } from '../Model/Pokemon';
 import { EvolutionChain, EvolutionData, Species } from '../Model/Revolution';
 import { extractLastNumber, heightConverter, weightConverter } from '../utils/unitFormatConverter';
 import { LoadComponent } from './Index'
@@ -17,7 +17,7 @@ struct PokeDetail {
   @State isLoading: boolean = false
   @State httpCode: number = 0
   @State pokeInfo: PokeInformation = new PokeInformation()
-  @State types: string[] = []
+  @State types: PokeType[] = []
   @State abilities: AbilityInfo[] = []
   @State pokeEvolution: EvolutionData = new EvolutionData()
   @State abilityUrlList: string[] = []
@@ -51,7 +51,7 @@ struct PokeDetail {
           // 提取类型名称并存储为字符串数组
           if (Array.isArray(this.pokeInfo.types)) {
             this.types = this.pokeInfo.types.map((type) => {
-              return type.type?.name || 'Unknown'; // 提取类型名称
+              return type.type as PokeType
             });
           }
 
@@ -105,75 +105,85 @@ struct PokeDetail {
   @Builder
   PokemonTypes() {
     // 使用 forEach 遍历数组并渲染每个类型
-    ForEach(this.types, (item: string) => {
-      if (item == 'grass') {
-        Text(`${item}`)
-          .typeStyle(Color.Green, Color.White)
+    ForEach(this.types, (item: PokeType) => {
+      Row(){
+        if (item.name == 'grass') {
+          Text(`${item.name}`)
+            .typeStyle(Color.Green, Color.White)
+        }
+        else if (item.name == 'poison') {
+          Text(`${item.name}`)
+            .typeStyle('#ff82139f', Color.White)
+        }
+        else if (item.name == 'flying') {
+          Text(`${item.name}`)
+            .typeStyle('#ffb8afb8')
+        }
+        else if (item.name == 'bug') {
+          Text(`${item.name}`)
+            .typeStyle('#ff1f7033', Color.White)
+        }
+        else if (item.name == 'fire') {
+          Text(`${item.name}`)
+            .typeStyle('#ffbe4110', Color.White)
+        }
+        else if (item.name == 'ice') {
+          Text(`${item.name}`)
+            .typeStyle('#ff69b4ea')
+        }
+        else if (item.name == 'ground') {
+          Text(`${item.name}`)
+            .typeStyle('#ff6b5326', Color.White)
+        }
+        else if (item.name == 'rock') {
+          Text(`${item.name}`)
+            .typeStyle('#ff726035', Color.White)
+        }
+        else if (item.name == 'water') {
+          Text(`${item.name}`)
+            .typeStyle('#ff0561ab', Color.White)
+        }
+        else if (item.name == 'electric') {
+          Text(`${item.name}`)
+            .typeStyle('#ffe7e434', Color.White)
+        }
+        else if (item.name == 'steel') {
+          Text(`${item.name}`)
+            .typeStyle('#ff82139f', Color.White)
+        }
+        else if (item.name == 'dragon') {
+          Text(`${item.name}`)
+            .typeStyle('#ff82139f', Color.White)
+        }
+        else if (item.name == 'normal') {
+          Text(`${item.name}`)
+            .typeStyle('#ff5f5d5f', Color.White)
+        }
+        else if (item.name == 'fairy') {
+          Text(`${item.name}`)
+            .typeStyle('#ffa72ca7', Color.White)
+        }
+        else if (item.name == 'fighting') {
+          Text(`${item.name}`)
+            .typeStyle('#ffb05804', Color.White)
+        }
+        else if (item.name == 'psychic') {
+          Text(`${item.name}`)
+            .typeStyle('#ffd42dd4', Color.White)
+        }
+        else if (item.name == 'ghost') {
+          Text(`${item.name}`)
+            .typeStyle('#ff660566', Color.White)
+        }
       }
-      else if (item == 'poison') {
-        Text(`${item}`)
-          .typeStyle('#ff82139f', Color.White)
-      }
-      else if (item == 'flying') {
-        Text(`${item}`)
-          .typeStyle('#ffb8afb8')
-      }
-      else if (item == 'bug') {
-        Text(`${item}`)
-          .typeStyle('#ff1f7033', Color.White)
-      }
-      else if (item == 'fire') {
-        Text(`${item}`)
-          .typeStyle('#ffbe4110', Color.White)
-      }
-      else if (item == 'ice') {
-        Text(`${item}`)
-          .typeStyle('#ff69b4ea')
-      }
-      else if (item == 'ground') {
-        Text(`${item}`)
-          .typeStyle('#ff6b5326', Color.White)
-      }
-      else if (item == 'rock') {
-        Text(`${item}`)
-          .typeStyle('#ff726035', Color.White)
-      }
-      else if (item == 'water') {
-        Text(`${item}`)
-          .typeStyle('#ff0561ab', Color.White)
-      }
-      else if (item == 'electric') {
-        Text(`${item}`)
-          .typeStyle('#ffe7e434', Color.White)
-      }
-      else if (item == 'steel') {
-        Text(`${item}`)
-          .typeStyle('#ff82139f', Color.White)
-      }
-      else if (item == 'dragon') {
-        Text(`${item}`)
-          .typeStyle('#ff82139f', Color.White)
-      }
-      else if (item == 'normal') {
-        Text(`${item}`)
-          .typeStyle('#ff5f5d5f', Color.White)
-      }
-      else if (item == 'fairy') {
-        Text(`${item}`)
-          .typeStyle('#ffa72ca7', Color.White)
-      }
-      else if (item == 'fighting') {
-        Text(`${item}`)
-          .typeStyle('#ffb05804', Color.White)
-      }
-      else if (item == 'psychic') {
-        Text(`${item}`)
-          .typeStyle('#ffd42dd4', Color.White)
-      }
-      else if (item == 'ghost') {
-        Text(`${item}`)
-          .typeStyle('#ff660566', Color.White)
-      }
+      .onClick(()=>{
+        // console.info(`Clicked:${item.url}`)
+        router.pushUrl({url: 'pages/TypeDetail',
+        params:{
+          url: item.url,
+          typeName: item.name
+        }})
+      })
     })
   }
 

@@ -2,6 +2,7 @@ import { Pokemon, PokemonResponse, PokeInfo, PokeInformation } from '../Model/Po
 import { EvolutionData, EvolutionChainUrl, PokemonSpecies } from '../Model/Revolution'
 import http from '@ohos.net.http';
 import { AbilityData, EffectEntry, PokemonData } from '../Model/AbilityEffect';
+import { DamageRelations, PokemonTypeData } from '../Model/Type';
 
 const BASE_URL: string = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1000"
 
@@ -165,6 +166,27 @@ class PokemonDataSource {
           } catch (parseErr) {
             console.error('JSON Parse Error:', parseErr);
             reject(parseErr);
+          }
+        } else {
+          console.error('HTTP Error:', err);
+          reject(err);
+        }
+      })
+    })
+  }
+
+  async getTypeDetail(url: string): Promise<DamageRelations> {
+    return new Promise<DamageRelations>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(`${url}`, (err, data) => {
+        if (!err) {
+          try {
+            let responseData: PokemonTypeData = JSON.parse(data.result as string)
+            const res: DamageRelations = responseData.damage_relations
+            resolve(res)
+          } catch (parseErr) {
+            console.error('JSON Parse Error', parseErr);
+            reject(err);
           }
         } else {
           console.error('HTTP Error:', err);
