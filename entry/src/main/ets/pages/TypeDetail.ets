@@ -1,6 +1,7 @@
 import router from '@ohos.router'
 import { PokemonDataSource } from '../data/DataSource'
 import { DamageRelations, TypeInfo } from '../Model/Type'
+import { HttpErrorComponent, LoadComponent } from './Index'
 
 interface RouterParams {
   url: string,
@@ -173,6 +174,14 @@ struct TypeDetail {
   build() {
     Column({ space: 10 }) {
       this.NavigationComponent()
+      if (this.isLoading) {
+        LoadComponent() // 显示加载组件
+      }
+      if (this.httpCode == -1) {
+        HttpErrorComponent({
+          text: 'Can\'t connect to the server'
+        })
+      }
       Row() {
         Text(this.typeName)
           .fontWeight(800)

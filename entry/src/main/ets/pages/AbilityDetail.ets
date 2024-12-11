@@ -2,6 +2,7 @@ import router from '@ohos.router';
 import { PokemonDataSource } from '../data/DataSource';
 import { EffectEntry, Language, Pokemon, PokemonData } from '../Model/AbilityEffect';
 import { extractLastNumber } from '../utils/unitFormatConverter';
+import { HttpErrorComponent, LoadComponent } from './Index';
 
 interface RouterParams {
   url: string,
@@ -120,7 +121,14 @@ struct AbilityDetail {
   build() {
     Column({ space: 20 }) {
       this.NavigationComponent()
-
+      if (this.isLoading) {
+        LoadComponent() // 显示加载组件
+      }
+      if (this.httpCode == -1) {
+        HttpErrorComponent({
+          text: 'Can\'t connect to the server'
+        })
+      }
       Row() {
         Text(`${this.abilityName}`)
           .fontSize(40)

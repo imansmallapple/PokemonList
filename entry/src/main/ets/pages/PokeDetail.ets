@@ -3,7 +3,7 @@ import { PokemonDataSource } from '../data/DataSource';
 import { Ability, AbilityInfo, PokeInformation, Pokemon, PokeType } from '../Model/Pokemon';
 import { EvolutionChain, EvolutionData, Species } from '../Model/Revolution';
 import { extractLastNumber, heightConverter, weightConverter } from '../utils/unitFormatConverter';
-import { LoadComponent } from './Index'
+import { HttpErrorComponent, LoadComponent } from './Index'
 
 AppStorage.setOrCreate<string>("url", '');
 AppStorage.setOrCreate<string>("abilityName", '');
@@ -217,12 +217,16 @@ struct PokeDetail {
   build() {
     Column({ space: 10 }) {
       this.NavigationComponent()
-
+      if (this.isLoading) {
+        LoadComponent() // 显示加载组件
+      }
+      if (this.httpCode == -1) {
+        HttpErrorComponent({
+          text: 'Can\'t connect to the server'
+        })
+      }
       Scroll() {
         Column() {
-          if (this.isLoading) {
-            LoadComponent() // 显示加载组件
-          }
           Row() {
             Column() {
               Image(this.image)

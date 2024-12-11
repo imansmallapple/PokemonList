@@ -65,10 +65,14 @@ struct Index {
     Row() {
       Column() {
 
-        //todo: to be uncommented
-        // if (this.isLoading) {
-        //   LoadComponent() // 显示加载组件
-        // }
+        if (this.isLoading) {
+          LoadComponent() // 显示加载组件
+        }
+        if (this.httpCode == -1) {
+          HttpErrorComponent({
+            text: 'Can\'t connect to the server'
+          })
+        }
         Row({ space: 60 }) {
           Text(`No.`)
           Text('Image')
@@ -140,6 +144,30 @@ export struct LoadComponent {
         .color(Color.Blue)
         .width(50)
         .margin({ bottom: '10%' })
+    }
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+
+@Component
+export struct HttpErrorComponent {
+  @Prop text: string = ''
+
+  build() {
+    Column() {
+      Column() {
+
+        Image($r('app.media.ic_no_wifi'))
+          .width('20%')
+          .opacity(0.4)
+        Text(this.text)
+          .opacity(0.4)
+          .margin(5)
+      }
+      .margin({
+        bottom: '10%'
+      })
     }
     .height('100%')
     .justifyContent(FlexAlign.Center)
