@@ -19,6 +19,11 @@ struct Index {
   @State dataSet: MyDataSource = new MyDataSource()
   @State pokeInfo: PokeInfo[] = []
   @State typeList: string[][] = []
+  private searchController: SearchController = new SearchController()
+  @State changeValue: string = ''
+  @State isFiltered: boolean = false
+  @State filteredPokemon: Pokemon[] = []
+  @State isShouldFocus: boolean = false
 
   aboutToAppear() {
     this.isLoading = true;
@@ -62,28 +67,57 @@ struct Index {
   }
 
   build() {
-    Row() {
-      Column() {
-        Row() {
-          Text(`No.`)
-            .margin({left: 20,right:60})
-          Text('Image')
-            .margin({right:60})
-          Text('Name')
-            .margin({right:60})
-          Text('Type')
-            .margin({right:30})
-        }
-        .width('100%')
-        if (this.isLoading) {
-          LoadComponent() // 显示加载组件
-        }
-        if (this.httpCode == -1) {
-          HttpErrorComponent({
-            text: 'Can\'t connect to the server'
-          })
-        }
+    Column() {
+      Search({
+        value: this.changeValue,
+        placeholder: 'search',
+        controller: this.searchController,
+      })
+        .focusable(true)
+        .width("100%")
+        .height(40)
+        .backgroundColor("#F5F5F5")
+        .placeholderColor(Color.Grey)
+        .placeholderFont({ size: 14, weight: 400 })
+        .textFont({ size: 14, weight: 400 })
+        .onChange((value: string) => {
+          this.changeValue = value
+          if (value == '') {
+            this.isFiltered = false
+          }
+          this.isFiltered = true
+          const filteredPokemon = this.pokeList.filter((pokemon: Pokemon) => {
+            return pokemon.name.toLowerCase().includes(value.toLowerCase())
+          });
+          this.filteredPokemon = filteredPokemon
+        })
+        .onTouch(() => {
+          this.isShouldFocus = true
+        })
+        .focusable(this.isShouldFocus)
 
+
+      Row() {
+        Text(`No.`)
+          .margin({ left: 20, right: 60 })
+        Text('Image')
+          .margin({ right: 60 })
+        Text('Name')
+          .margin({ right: 60 })
+        Text('Type')
+          .margin({ right: 30 })
+      }
+      .width('100%')
+
+      if (this.isLoading) {
+        LoadComponent() // 显示加载组件
+      }
+      if (this.httpCode == -1) {
+        HttpErrorComponent({
+          text: 'Can\'t connect to the server'
+        })
+      }
+      if (!this.isFiltered) {
         List({ scroller: this.scroller }) {
           LazyForEach(this.dataSet, (item: Pokemon, index: number) => {
             ListItem() {
@@ -131,12 +165,59 @@ struct Index {
             })
           })
         }
+      } else {
+        ForEach(this.filteredPokemon, (item: Pokemon, index: number) => {
+          ListItem() {
+            Row({ space: 20 }) {
+              Row() {
+                Text(`${index + 1}`)
+              }
+              .width(50)
+              .margin({
+                left: 30
+              })
 
-        Text(`http:${this.httpCode}`)
+              Row() {
+                Image(item.image)
+                  .width(50)
+              }
+              .width(50)
+
+              Row() {
+                Text(item.name)
+              }
+              .width(90)
+              .margin({
+                left: 20
+              })
+
+              Row() {
+                Text(this.typeList[index]?.join(', ') || 'No types available')
+                // Text(item.detail?.types?.map(type => type.type?.name).join(', '))
+              }
+              .layoutWeight(1)
+            }
+            .width('100%')
+            .height('8%')
+            .justifyContent(FlexAlign.Start)
+          }
+          .onClick(() => {
+            // console.info(`item id: ${index+1}`)
+            AppStorage.setOrCreate("pokeName", item.name);
+            AppStorage.setOrCreate("pokeId", index + 1);
+            AppStorage.setOrCreate("pokeImage", item.image);
+            router.pushUrl({
+              url: 'pages/PokeDetail',
+            })
+          })
+        })
       }
-      .width('100%')
+
+      // Text(`http:${this.httpCode}`)
     }
+    .width('100%')
     .height('100%')
+    .justifyContent(FlexAlign.Start)
   }
 }
 
