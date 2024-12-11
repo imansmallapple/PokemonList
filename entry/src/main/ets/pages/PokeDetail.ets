@@ -7,6 +7,7 @@ import { LoadComponent } from './Index'
 
 AppStorage.setOrCreate<string>("url", '');
 AppStorage.setOrCreate<string>("abilityName", '');
+
 @Entry
 @Component
 struct PokeDetail {
@@ -23,17 +24,6 @@ struct PokeDetail {
   @State evolutionSpecies: Species[] = []
   private scroller: Scroller = new Scroller()
   @State source: string = ''
-
-  // onPageShow() {
-  //   const params = router.getParams() as RouterParams
-  //   this.source = params.source as string
-  //   if (this.source == 'index') {
-  //     this.localParams = params
-  //     this.pokeName = params.name
-  //     this.pokeId = params.id
-  //     this.image = params.image
-  //   }
-  // }
 
   aboutToAppear() {
     this.isLoading = true;
@@ -101,7 +91,7 @@ struct PokeDetail {
   @Builder
   NavigationTitle() {
     Column() {
-      Text('Pokemon Data')
+      Text('Pokemon')
         .fontColor('#182431')
         .fontSize(26)
         .fontWeight(500)
@@ -187,15 +177,36 @@ struct PokeDetail {
     })
   }
 
-  build() {
-    Column({ space: 10 }) {
+  @Builder
+  NavigationComponent(){
+    Row(){
       Navigation()
         .title(this.NavigationTitle())
-        .hideToolBar(true)
         .height(56)
-        .width('90%')
+        .width('50%')
         .titleMode(NavigationTitleMode.Mini)
-        .hideBackButton(false)
+
+      Row(){
+        Image($r('app.media.home_icon'))
+          .width(30)
+          .margin({
+            right: 20
+          })
+          .onClick(()=>{
+            router.clear()
+            router.pushUrl({url: 'pages/Index'})
+          })
+
+      }
+      .layoutWeight(1)
+      .justifyContent(FlexAlign.End)
+    }
+    .width('100%')
+  }
+
+  build() {
+    Column({ space: 10 }) {
+      this.NavigationComponent()
 
       Scroll() {
         Column() {
@@ -345,6 +356,14 @@ struct PokeDetail {
                       }
                       .margin({ left: 10, right: 10 }) // 每个宝可梦间距
                     }
+                    .onClick(() => {
+                      AppStorage.setOrCreate("pokeName", item.name);
+                      AppStorage.setOrCreate("pokeId", extractLastNumber(item.url));
+                      AppStorage.setOrCreate("pokeImage", `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${extractLastNumber(item.url)}.png`);
+                      router.pushUrl({
+                        url: 'pages/PokeDetail'
+                      })
+                    })
                   });
                 }
                 .height('20%')

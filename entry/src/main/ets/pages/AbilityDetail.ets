@@ -90,23 +90,42 @@ struct AbilityDetail {
     .width('100%')
   }
 
-  build() {
-    Column({ space: 20 }) {
+  @Builder
+  NavigationComponent(){
+    Row(){
       Navigation()
         .title(this.NavigationTitle())
-        .hideToolBar(true)
         .height(56)
-        .width('100%')
+        .width('50%')
         .titleMode(NavigationTitleMode.Mini)
-        .hideBackButton(false)
+
+      Row(){
+        Image($r('app.media.home_icon'))
+          .width(30)
+          .margin({
+            right: 20
+          })
+          .onClick(()=>{
+            router.clear()
+            router.pushUrl({url: 'pages/Index'})
+          })
+
+      }
+      .layoutWeight(1)
+      .justifyContent(FlexAlign.End)
+    }
+    .width('100%')
+  }
+
+  build() {
+    Column({ space: 20 }) {
+      this.NavigationComponent()
+
       Row() {
         Text(`${this.abilityName}`)
           .fontSize(40)
           .fontWeight(800)
       }
-      .margin({
-        bottom: 20
-      })
 
       Column() {
         Row() {
