@@ -1,7 +1,11 @@
 import { BASE_URL, PokemonDataSource, MyDataSource } from '../data/DataSource';
-import { Pokemon, PokeInformation,PokeInfo, PokeTypeContent, PokeType } from '../Model/Pokemon';
+import { Pokemon, PokeInformation, PokeInfo, PokeTypeContent, PokeType } from '../Model/Pokemon';
 import { BusinessError } from '@ohos.base';
 import router from '@ohos.router';
+
+AppStorage.setOrCreate<string>("pokeName", '');
+AppStorage.setOrCreate<number>("PokeId", 0);
+AppStorage.setOrCreate<string>("pokeImage", '');
 
 @Entry
 @Component
@@ -71,6 +75,7 @@ struct Index {
           Text('Name')
           Text('Type')
         }
+
         List({ scroller: this.scroller }) {
           LazyForEach(this.dataSet, (item: Pokemon, index: number) => {
             ListItem() {
@@ -82,6 +87,7 @@ struct Index {
                 .margin({
                   left: 30
                 })
+
                 Row() {
                   Image(item.image)
                     .width(50)
@@ -106,17 +112,14 @@ struct Index {
               .height('8%')
               .justifyContent(FlexAlign.Start)
             }
-            .onClick(()=>{
+            .onClick(() => {
+              // console.info(`item id: ${index+1}`)
+              AppStorage.setOrCreate("pokeName", item.name);
+              AppStorage.setOrCreate("pokeId", index + 1);
+              AppStorage.setOrCreate("pokeImage", item.image);
               router.pushUrl({
                 url: 'pages/PokeDetail',
-                params:{
-                  id: index+1,
-                  name: item.name,
-                  image: item.image,
-                  source: 'index',
-                }
               })
-              // console.info(`item id: ${index+1}`)
             })
           })
         }

@@ -5,22 +5,16 @@ import { EvolutionChain, EvolutionData, Species } from '../Model/Revolution';
 import { extractLastNumber, heightConverter, weightConverter } from '../utils/unitFormatConverter';
 import { LoadComponent } from './Index'
 
-export interface RouterParams {
-  id: number;
-  name: string;
-  image: string;
-  source?: string;
-}
-
+AppStorage.setOrCreate<string>("url", '');
+AppStorage.setOrCreate<string>("abilityName", '');
 @Entry
 @Component
 struct PokeDetail {
-  @State pokeName: string = ''
-  @State localParams: RouterParams | null = null;
-  @State pokeId: number = 0
+  @State pokeName: string = AppStorage.get("pokeName") as string
+  @State pokeId: number = AppStorage.get("pokeId") as number
+  @State image: string = AppStorage.get("pokeImage") as string
   @State isLoading: boolean = false
   @State httpCode: number = 0
-  @State image: string = ''
   @State pokeInfo: PokeInformation = new PokeInformation()
   @State types: string[] = []
   @State abilities: AbilityInfo[] = []
@@ -30,18 +24,16 @@ struct PokeDetail {
   private scroller: Scroller = new Scroller()
   @State source: string = ''
 
-  // todo: 应该检查这些数据是从哪个页面传过来的，如果是技能介绍页面，增加一个简单的if判断
-  // todo: 考虑用appStorage存放当前的宝可梦信息
-  onPageShow() {
-    const params = router.getParams() as RouterParams
-    this.source = params.source as string
-    if (this.source == 'index') {
-      this.localParams = params
-      this.pokeName = params.name
-      this.pokeId = params.id
-      this.image = params.image
-    }
-  }
+  // onPageShow() {
+  //   const params = router.getParams() as RouterParams
+  //   this.source = params.source as string
+  //   if (this.source == 'index') {
+  //     this.localParams = params
+  //     this.pokeName = params.name
+  //     this.pokeId = params.id
+  //     this.image = params.image
+  //   }
+  // }
 
   aboutToAppear() {
     this.isLoading = true;
@@ -201,9 +193,10 @@ struct PokeDetail {
         .title(this.NavigationTitle())
         .hideToolBar(true)
         .height(56)
-        .width('100%')
+        .width('90%')
         .titleMode(NavigationTitleMode.Mini)
         .hideBackButton(false)
+
       Scroll() {
         Column() {
           if (this.isLoading) {
@@ -312,12 +305,11 @@ struct PokeDetail {
               .margin(10)
               .width('100%')
               .onClick(() => {
+                AppStorage.setOrCreate("url", this.abilityUrlList[index]);
+                AppStorage.setOrCreate("name", item.ability.name);
+
                 router.pushUrl({
                   url: 'pages/AbilityDetail',
-                  params: {
-                    url: this.abilityUrlList[index],
-                    name: item.ability.name
-                  }
                 })
                 // console.info(`Index:${index} clicked!`)
               })

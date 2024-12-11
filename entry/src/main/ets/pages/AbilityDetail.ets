@@ -8,12 +8,11 @@ interface RouterParams {
   name: string
 }
 
-
 @Entry
 @Component
 struct AbilityDetail {
-  @State url: string = ''
-  @State abilityName: string = ''
+  @State url: string = AppStorage.get("url") as string
+  @State abilityName: string = AppStorage.get("abilityName") as string
   @State isLoading: boolean = false
   @State httpCode: number = 0
   private effectEntry: EffectEntry[] = []
@@ -21,12 +20,15 @@ struct AbilityDetail {
   private abilityPokemonData: PokemonData[] = []
   @State abilityPokemonList: Pokemon[] = []
   scroller: Scroller = new Scroller()
+  @State pokeName: string = AppStorage.get("pokeName") as string
+  @State pokeId: number = AppStorage.get("pokeId") as number
+  @State image: string = AppStorage.get("pokeImage") as string
 
-  onPageShow() {
-    const params = router.getParams() as RouterParams
-    this.url = params.url
-    this.abilityName = params.name
-  }
+  // onPageShow() {
+  //   const params = router.getParams() as RouterParams
+  //   this.url = params.url
+  //   this.abilityName = params.name
+  // }
 
   aboutToAppear(): void {
     this.isLoading = true
@@ -51,7 +53,7 @@ struct AbilityDetail {
           if (Array.isArray(this.abilityPokemonData)) {
             for (const item of this.abilityPokemonData) {
               this.abilityPokemonList.push(item.pokemon)
-              console.info(item.pokemon.name)
+              // console.info(item.pokemon.name)
             }
           }
 
@@ -74,15 +76,29 @@ struct AbilityDetail {
     })
 
   }
-
-  onBackPress(): boolean | void {
-    router.back({
-      url: 'pages/Index'
-    })
+  @Builder
+  NavigationTitle() {
+    Column() {
+      Text('Ability')
+        .fontColor('#182431')
+        .fontSize(26)
+        .fontWeight(500)
+    }
+    .justifyContent(FlexAlign.Center)
+    .alignItems(HorizontalAlign.Start)
+    .height('100%')
+    .width('100%')
   }
 
   build() {
     Column({ space: 20 }) {
+      Navigation()
+        .title(this.NavigationTitle())
+        .hideToolBar(true)
+        .height(56)
+        .width('100%')
+        .titleMode(NavigationTitleMode.Mini)
+        .hideBackButton(false)
       Row() {
         Text(`${this.abilityName}`)
           .fontSize(40)
@@ -155,6 +171,14 @@ struct AbilityDetail {
                     .fontSize(20)
                 }
               }
+              .onClick(()=>{
+                AppStorage.setOrCreate("pokeName", item.name);
+                AppStorage.setOrCreate("pokeId", extractLastNumber(item.url));
+                AppStorage.setOrCreate("pokeImage", `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${extractLastNumber(item.url)}.png`);
+                router.pushUrl({
+                  url: 'pages/PokeDetail'
+                })
+              })
             })
           }
         }
