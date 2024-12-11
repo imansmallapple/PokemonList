@@ -331,7 +331,7 @@ struct PokeDetail {
               .width('100%')
               .onClick(() => {
                 AppStorage.setOrCreate("url", this.abilityUrlList[index]);
-                AppStorage.setOrCreate("name", item.ability.name);
+                AppStorage.setOrCreate("abilityName", item.ability.name);
 
                 router.pushUrl({
                   url: 'pages/AbilityDetail',

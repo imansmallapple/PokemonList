@@ -64,7 +64,17 @@ struct Index {
   build() {
     Row() {
       Column() {
-
+        Row() {
+          Text(`No.`)
+            .margin({left: 20,right:60})
+          Text('Image')
+            .margin({right:60})
+          Text('Name')
+            .margin({right:60})
+          Text('Type')
+            .margin({right:30})
+        }
+        .width('100%')
         if (this.isLoading) {
           LoadComponent() // 显示加载组件
         }
@@ -72,12 +82,6 @@ struct Index {
           HttpErrorComponent({
             text: 'Can\'t connect to the server'
           })
-        }
-        Row({ space: 60 }) {
-          Text(`No.`)
-          Text('Image')
-          Text('Name')
-          Text('Type')
         }
 
         List({ scroller: this.scroller }) {
