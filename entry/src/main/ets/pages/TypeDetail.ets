@@ -15,6 +15,7 @@ struct TypeDetail {
   @State httpCode: number = 0
   @State typeName: string = ''
   @State damageRelation: DamageRelations = new DamageRelations()
+  scroller: Scroller = new Scroller()
 
   onPageShow() {
     const params = router.getParams() as RouterParams
@@ -87,78 +88,95 @@ struct TypeDetail {
     .width('100%')
   }
 
+  @Builder
+  ColorfulItem(item: TypeInfo) {
+    Row() {
+      if (item.name == 'grass') {
+        Text(`${item.name}`)
+          .typeStyle(Color.Green, Color.White)
+      }
+      else if (item.name == 'poison') {
+        Text(`${item.name}`)
+          .typeStyle('#ff82139f', Color.White)
+      }
+      else if (item.name == 'flying') {
+        Text(`${item.name}`)
+          .typeStyle('#ffb8afb8')
+      }
+      else if (item.name == 'bug') {
+        Text(`${item.name}`)
+          .typeStyle('#ff1f7033', Color.White)
+      }
+      else if (item.name == 'fire') {
+        Text(`${item.name}`)
+          .typeStyle('#ffbe4110', Color.White)
+      }
+      else if (item.name == 'ice') {
+        Text(`${item.name}`)
+          .typeStyle('#ff69b4ea')
+      }
+      else if (item.name == 'ground') {
+        Text(`${item.name}`)
+          .typeStyle('#ff6b5326', Color.White)
+      }
+      else if (item.name == 'rock') {
+        Text(`${item.name}`)
+          .typeStyle('#ff726035', Color.White)
+      }
+      else if (item.name == 'water') {
+        Text(`${item.name}`)
+          .typeStyle('#ff0561ab', Color.White)
+      }
+      else if (item.name == 'electric') {
+        Text(`${item.name}`)
+          .typeStyle('#ffe7e434', Color.White)
+      }
+      else if (item.name == 'steel') {
+        Text(`${item.name}`)
+          .typeStyle('#ff82139f', Color.White)
+      }
+      else if (item.name == 'dragon') {
+        Text(`${item.name}`)
+          .typeStyle('#ff82139f', Color.White)
+      }
+      else if (item.name == 'normal') {
+        Text(`${item.name}`)
+          .typeStyle('#ff5f5d5f', Color.White)
+      }
+      else if (item.name == 'fairy') {
+        Text(`${item.name}`)
+          .typeStyle('#ffa72ca7', Color.White)
+      }
+      else if (item.name == 'fighting') {
+        Text(`${item.name}`)
+          .typeStyle('#ffb05804', Color.White)
+      }
+      else if (item.name == 'psychic') {
+        Text(`${item.name}`)
+          .typeStyle('#ffd42dd4', Color.White)
+      }
+      else if (item.name == 'ghost') {
+        Text(`${item.name}`)
+          .typeStyle('#ff660566', Color.White)
+      }
+    }
+    .onClick(() => {
+      // console.info(`Clicked:${item.url}`)
+      router.replaceUrl({ url: 'pages/TypeDetail',
+        params: {
+          url: item.url,
+          typeName: item.name
+        } })
+    })
+  }
+
   build() {
     Column({ space: 10 }) {
       this.NavigationComponent()
       Row() {
-        if (this.typeName == 'grass') {
-          Text(`${this.typeName}`)
-            .typeStyle(Color.Green, Color.White)
-        }
-        else if (this.typeName == 'poison') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff82139f', Color.White)
-        }
-        else if (this.typeName == 'flying') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ffb8afb8')
-        }
-        else if (this.typeName == 'bug') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff1f7033', Color.White)
-        }
-        else if (this.typeName == 'fire') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ffbe4110', Color.White)
-        }
-        else if (this.typeName == 'ice') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff69b4ea')
-        }
-        else if (this.typeName == 'ground') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff6b5326', Color.White)
-        }
-        else if (this.typeName == 'rock') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff726035', Color.White)
-        }
-        else if (this.typeName == 'water') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff0561ab', Color.White)
-        }
-        else if (this.typeName == 'electric') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ffe7e434', Color.White)
-        }
-        else if (this.typeName == 'steel') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff82139f', Color.White)
-        }
-        else if (this.typeName == 'dragon') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff82139f', Color.White)
-        }
-        else if (this.typeName == 'normal') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff5f5d5f', Color.White)
-        }
-        else if (this.typeName == 'fairy') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ffa72ca7', Color.White)
-        }
-        else if (this.typeName == 'fighting') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ffb05804', Color.White)
-        }
-        else if (this.typeName == 'psychic') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ffd42dd4', Color.White)
-        }
-        else if (this.typeName == 'ghost') {
-          Text(`${this.typeName}`)
-            .typeStyle('#ff660566', Color.White)
-        }
+        Text(this.typeName)
+          .fontWeight(800)
+          .fontSize(30)
       }
       .justifyContent(FlexAlign.Center)
       .width('100%')
@@ -187,10 +205,16 @@ struct TypeDetail {
           }
           .width('100%')
 
-          Row({ space: 10 }) {
-            ForEach(this.damageRelation.double_damage_from, (item: TypeInfo) => {
-              Text(`${item.name}`)
-            })
+          Row({ space: 2 }) {
+            List({ scroller: this.scroller }) {
+              ForEach(this.damageRelation.double_damage_to, (item: TypeInfo) => {
+                ListItem() {
+                  this.ColorfulItem(item)
+                }
+              })
+            }
+            .listDirection(Axis.Horizontal)
+            .height('15%')
           }
         }
 
@@ -202,10 +226,16 @@ struct TypeDetail {
           .width('100%')
 
 
-          Row({ space: 10 }) {
-            ForEach(this.damageRelation.double_damage_to, (item: TypeInfo) => {
-              Text(`${item.name}`)
-            })
+          Row({ space: 2 }) {
+            List({ scroller: this.scroller }) {
+              ForEach(this.damageRelation.half_damage_to, (item: TypeInfo) => {
+                ListItem() {
+                  this.ColorfulItem(item)
+                }
+              })
+            }
+            .listDirection(Axis.Horizontal)
+            .height('15%')
           }
         }
       }
@@ -225,32 +255,45 @@ struct TypeDetail {
         }
         .width('100%')
 
-        Column({space: 25}) {
+        Column({ space: 25 }) {
           Column() {
             Row() {
-              Text('moves are super-effective against:')
+              Text(`These types are not very effective against ${this.typeName} Pokémon:`)
                 .fontSize(18)
             }
             .width('100%')
 
-            Row({ space: 10 }) {
-              ForEach(this.damageRelation.double_damage_from, (item: TypeInfo) => {
-                Text(`${item.name}`)
-                  .fontSize(18)
-              })
+            Row({ space: 2 }) {
+              List({ scroller: this.scroller }) {
+                ForEach(this.damageRelation.half_damage_from, (item: TypeInfo) => {
+                  ListItem() {
+                    this.ColorfulItem(item)
+                  }
+                })
+              }
+              .listDirection(Axis.Horizontal)
+              .height('15%')
             }
           }
 
           Column() {
             Row() {
-              Text('moves are super-effective against:')
+              Text(`These types are super-effective against ${this.typeName} Pokémon:`)
+                .fontSize(18)
+
             }
             .width('100%')
 
-            Row({ space: 10 }) {
-              ForEach(this.damageRelation.double_damage_from, (item: TypeInfo) => {
-                Text(`${item.name}`)
-              })
+            Row({ space: 2 }) {
+              List({ scroller: this.scroller }) {
+                ForEach(this.damageRelation.double_damage_from, (item: TypeInfo) => {
+                  ListItem() {
+                    this.ColorfulItem(item)
+                  }
+                })
+              }
+              .listDirection(Axis.Horizontal)
+              .height('15%')
             }
           }
 
@@ -276,6 +319,6 @@ function typeStyle(backgroundColor: ResourceColor | string, fontColor?: Resource
   .padding(10)
   .backgroundColor(backgroundColor)
   .borderRadius(10)
-  .fontSize(30)
+  .fontSize(15)
   .fontWeight(800)
 }
